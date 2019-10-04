@@ -32,10 +32,13 @@ def get_token():
         url_aut = 'https://intranet.hbtn.io/users/auth_token.json'
         aut = requests.post(url_aut, data)
         aut = aut.json()
-        if aut:
+        if aut and aut.get('auth_token'):
             token = aut.get('auth_token')
+        else:
+            raise Exception
     except Exception:
         print('Are you sure you setup correctly your credentials in config.json?')
+        sys.exit(0)
     return token
 
 
@@ -54,6 +57,7 @@ def get_project(token, project):
                 'tasks': req.get('tasks')}
     except Exception:
         print('Are you sure you are checking a correct project?')
+        sys.exit(0)
     return proj_dict
 
 
@@ -64,6 +68,9 @@ def ask_correction(token, task):
     res = res.json()
     if res:
         return res["id"]
+    else:
+        print("Something is wrong asking for task {}".format(task["title"]))
+        system.exit(0)
 
 
 def get_correction(token, id):
@@ -82,10 +89,12 @@ def get_checkers(token, project, tasks=[]):
         for task in tasks_asked:
             correction = ask_correction(token, task["id"])
             result = {"status": "Send"}
+            print("We are generating correction for task {}".format(task["title"]))
             while (result["status"] != "Done"):
                 result = get_correction(token, correction)
-                print("Esperanos por tres 6 segundos mas")
+                print("wait for 6 seconds more.....")
                 time.sleep(6)
+            """  create function to display the checker result"""
             print(result)
 
 if len(sys.argv) == 1:
@@ -103,9 +112,5 @@ if len(sys.argv) >= 3:
 ''' Get token for requests '''
 tok = get_token()
 ''' Get project id and name '''
-print(tok)
 proj = get_project(tok, project)
-''' Get task for project  iterate over proj.tasks
-this attribute have a position of a task '''
 checkers = get_checkers(tok, proj, tasks)
-print(checkers)

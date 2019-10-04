@@ -19,7 +19,7 @@ class User(BaseModel, Base):
         name = Column(String(128), nullable=True)
         email= Column(String(128), nullable=True)
         password = Column(String(128), nullable=True)
-
+        correction = relationship('Correction', backref='user', cascade='delete')
     else:
         name = ''
         password = ''

@@ -1,7 +1,7 @@
 import os
 from models.base_model import BaseModel
 from models.user import User
-from model.projects import Project
+from models.projects import Project
 from models.task import Task
 from models.corrections import Correction
 from models.check import Check

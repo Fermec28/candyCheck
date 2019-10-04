@@ -10,8 +10,8 @@ from sqlalchemy import Column, Integer, String, Float
 STORAGE_TYPE = os.environ.get('CANDY_TYPE_STORAGE')
 
 
-class State(BaseModel, Base):
-    """State class handles all application states"""
+class Project(BaseModel, Base):
+    """Project class handles all application states"""
     if STORAGE_TYPE == "db":
         __tablename__ = 'projects'
         name = Column(String(128), nullable=False)

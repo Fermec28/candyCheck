@@ -14,7 +14,7 @@ class Check(BaseModel, Base):
     if STORAGE_TYPE == "db":
         __tablename__ = 'check'
         title = Column(String(128), nullable=False)
-        passed = Column(Boolean, nullable=False)
+        passed = Column(String(6), nullable=False)
         correction_id = Column(Integer, ForeignKey('correction.id'), nullable=False)
     else:
                 title = ''

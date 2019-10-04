@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Entry point to use the candy checker
+echo '************************'
+echo '* Setup Candy checkers *'
+echo '************************'
+echo "This script is designed for ubuntu Ubuntu 16 "
+options=("Install Requirements"
+        "Give the credentials"
+        "Exit")
+select opt in "${options[@]}"
+do
+case $opt in
+"Install Requirements")
+echo 'updating system'
+apt update
+echo 'Installing python and pip'
+apt install python python3-pip -y
+echo 'Installing requests module'
+pip3 install requests
+break
+;;
+
+"Give the credentials")
+read  -r -p "Give me your user, please: " USER
+read  -r -p "Give me your password, please: " PASS
+echo 'If you dont know which is your APi, you can find on: '
+echo 'https://intranet.hbtn.io/dashboards/my_tools'
+read  -r -p "Give me your API key: " API
+printf "{\n'api_key': %s ,\n'email': %s@holbertonschool.com\n'password': %s\n'scope': 'checker'\n}\n" "$API" "$USER" "$PASS" > config.json
+break
+;;
+
+"Exit")                                                                                                                                                              
+ break                                                                                                                                                            
+ ;;                                                                                                                                                               
+ *) echo invalid option;;
+esac
+done 

@@ -2,7 +2,7 @@
 """
 Flask App that integrates with AirBnB static HTML Template
 """
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 from models import storage
 import uuid
 
@@ -24,25 +24,20 @@ def teardown_db(exception):
     storage.close()
 
 
-@app.route('/1-hbnb')
-def hbnb_filters(the_id=None):
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     """
     handles request to custom template with states, cities & amentities
     """
-    state_objs = storage.all('State').values()
-    states = dict([state.name, state] for state in state_objs)
-    amens = storage.all('Amenity').values()
-    places = storage.all('Place').values()
-    users = dict([user.id, "{} {}".format(user.first_name, user.last_name)]
-                 for user in storage.all('User').values())
-    return render_template('1-hbnb.html',
-                           states=states,
-                           amens=amens,
-                           places=places,
-                           cache_id=uuid.uuid4(),
-                           users=users)
+    error = None
+    if request.method == 'POST':
+        if request.form['email'] != 'admin' or request.form['pwd'] != 'admin':
+            error = 'Invalid user or password, Please try again.'
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
 
 if __name__ == "__main__":
     """
     MAIN Flask App"""
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, debug=True)

@@ -25,7 +25,7 @@ def filter_task(all_tasks, task_required=[]):
 def get_token():
     try:
         data = {
-            'api_key': '68005742a84467416325ec2636a47b5c',
+            'api_key': '',
             'email': '@holbertonschool.com',
             'password': '',
             'scope': 'checker'}
@@ -86,16 +86,39 @@ def get_checkers(token, project, tasks=[]):
         print("You can't check an empty project")
     else:
         tasks_asked = filter_task(project["tasks"], tasks)
+        print("")
+        print("*"*30)
+        print("\n{}\n".format(project['name']))
+        print("*"*30)
+        corrects_l = []
         for task in tasks_asked:
+            corrects_d = {}
             correction = ask_correction(token, task["id"])
             result = {"status": "Send"}
-            print("We are generating correction for task {}".format(task["title"]))
+            print("\nWe are generating correction for task - {}\n".format(task["title"]))
             while (result["status"] != "Done"):
                 result = get_correction(token, correction)
                 print("wait for 6 seconds more.....")
                 time.sleep(6)
-            """  create function to display the checker result"""
-            print(result)
+            """  Call function to display the checker result"""
+            corrects_d['title'] = task['title']
+            corrects_d['result'] =result
+            corrects_l.append(corrects_d)
+        print_result(corrects_l)
+
+def print_result(corrects_l):
+    for correct in corrects_l:
+        passed = 0
+        checkers = correct['result'].get('result_display')['checks']
+        num_checks = len(checkers)
+        for check in checkers:
+            if check['passed'] == True:
+                passed += 1
+        print("\n")
+        print("\t* Task: {} - {}/{} checkers validated\n".format(correct['title'], passed, num_checks))
+        if passed == num_checks:
+            print("\t \U0001f600 \U0001f600 Congratulations, You earn a candy!!! \U0001f600 \U0001f600 \n")
+
 
 if len(sys.argv) == 1:
     print_help()

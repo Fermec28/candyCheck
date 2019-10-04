@@ -3,7 +3,7 @@
 Handles I/O, writing and reading, of JSON for storage of all class instances
 """
 import json
-from models import base_model, amenity, city, place, review, state, user
+from models import base_model, user, projects, task, check, corrections
 from datetime import datetime
 
 strptime = datetime.strptime
@@ -16,11 +16,10 @@ class FileStorage:
     """
     CNC = {
         'BaseModel': base_model.BaseModel,
-        'Amenity': amenity.Amenity,
-        'City': city.City,
-        'Place': place.Place,
-        'Review': review.Review,
-        'State': state.State,
+        'Task': task.Task,
+        'Projects': projects.Project,
+        'Check': check.Check,
+        'Correction': corrections.Correction,
         'User': user.User
     }
     """CNC - this variable is a dictionary with:

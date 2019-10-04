@@ -29,7 +29,7 @@ class BaseModel:
     """
 
     if STORAGE_TYPE == 'db':
-        id = Column(Integer, nullable=False, primary_key=True)
+        id = Column(Integer, nullable=False, primary_key=True, unique=True)
         created_at = Column(DateTime, nullable=False,
                             default=datetime.utcnow())
         updated_at = Column(DateTime, nullable=False,

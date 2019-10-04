@@ -2,6 +2,7 @@
 """
 User Class from Models Module
 """
+
 import os
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
@@ -16,9 +17,13 @@ class User(BaseModel, Base):
     if STORAGE_TYPE == "db":
         __tablename__ = 'users'
         name = Column(String(128), nullable=True)
+        email= Column(String(128), nullable=True)
+        password = Column(String(128), nullable=True)
 
     else:
         name = ''
+        password = ''
+        mail = ''
 
     def __init__(self, *args, **kwargs):
         """

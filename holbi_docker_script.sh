@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Docker for holbi hack
+# Docker for holbi hackaton
 echo '********************************************************************************'
 echo '* Script for creating the volume and manage the holbi hack container container *'
 echo '********************************************************************************'

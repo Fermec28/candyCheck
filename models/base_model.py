@@ -10,7 +10,7 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, DateTime
 
-STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
+STORAGE_TYPE = os.environ.get('CANDY_TYPE_STORAGE')
 
 """
     Creates instance of Base if storage type is a database

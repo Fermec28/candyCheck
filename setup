@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Setup for candy checker
+
+echo "**************************"
+echo "   Setup candy checkers  	"
+echo "**************************"
+echo "This script is designed for ubuntu Ubuntu 16 "
+echo "updating system "
+sudo apt update
+""

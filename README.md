@@ -1,2 +1,0 @@
-# candyCheck
-Hack Day Check

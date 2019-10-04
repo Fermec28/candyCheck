@@ -14,7 +14,7 @@ class Task(BaseModel, Base):
     if STORAGE_TYPE == "db":
         __tablename__ = 'tasks'
         title = Column(String(128), nullable=False)
-        project_id = Column(String(60), ForeignKey('project.id'), nullable=False)
+        project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
     else:
         state_id = ''
         title = ''

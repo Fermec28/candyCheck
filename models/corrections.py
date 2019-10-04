@@ -6,7 +6,7 @@ import os
 import models
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
 STORAGE_TYPE = os.environ.get('CANDY_TYPE_STORAGE')
 
 
@@ -15,9 +15,9 @@ class Correction(BaseModel, Base):
     if STORAGE_TYPE == "db":
         __tablename__ = 'correction'
         status = Column(String(10), nullable=False)
-        user_id = Column(String(60), ForeignKey('user.id'), nullable=False)
-        task_id = Column(String(60), ForeignKey('task.id'), nullable=False)
-        project_id = Column(String(60), ForeignKey('project.id'), nullable=False)
+        user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+        task_id = Column(Integer, ForeignKey('tasks.id'), nullable=False)
+        project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
         checks = relationship('Check', backref='correction', cascade='delete')
     else:
         status = ''

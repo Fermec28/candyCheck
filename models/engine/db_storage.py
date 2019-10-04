@@ -7,7 +7,7 @@ import os
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
-from models import base_model, amenity, city, place, review, state, user
+from models import base_model, user, projects, task, check, corrections
 
 
 class DBStorage:
@@ -15,11 +15,10 @@ class DBStorage:
         handles long term storage of all class instances
     """
     CNC = {
-        'Amenity': amenity.Amenity,
-        'City': city.City,
-        'Place': place.Place,
-        'Review': review.Review,
-        'State': state.State,
+        'Task': task.Task,
+        'Projects': projects.Project,
+        'Check': check.Check,
+        'Correction': corrections.Correction,
         'User': user.User
     }
 
@@ -35,11 +34,11 @@ class DBStorage:
         """
         self.__engine = create_engine(
             'mysql+mysqldb://{}:{}@{}/{}'.format(
-                os.environ.get('HBNB_MYSQL_USER'),
-                os.environ.get('HBNB_MYSQL_PWD'),
-                os.environ.get('HBNB_MYSQL_HOST'),
-                os.environ.get('HBNB_MYSQL_DB')))
-        if os.environ.get("HBNB_ENV") == 'test':
+                os.environ.get('CANDY_MYSQL_USER'),
+                os.environ.get('CANDY_MYSQL_PWD'),
+                os.environ.get('CANDY_MYSQL_HOST'),
+                os.environ.get('CANDY_MYSQL_DB')))
+        if os.environ.get("CANDY_ENV") == 'test':
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):

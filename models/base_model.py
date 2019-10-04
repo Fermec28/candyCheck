@@ -6,12 +6,11 @@ BaseModel Class of Models Module
 import os
 import json
 import models
-from uuid import uuid4, UUID
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, DateTime
 
-STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
+STORAGE_TYPE = os.environ.get('CANDY_TYPE_STORAGE')
 
 """
     Creates instance of Base if storage type is a database
@@ -30,7 +29,7 @@ class BaseModel:
     """
 
     if STORAGE_TYPE == 'db':
-        id = Column(String(60), nullable=False, primary_key=True)
+        id = Column(Integer, nullable=False, primary_key=True)
         created_at = Column(DateTime, nullable=False,
                             default=datetime.utcnow())
         updated_at = Column(DateTime, nullable=False,
@@ -43,27 +42,12 @@ class BaseModel:
         if kwargs:
             self.__set_attributes(kwargs)
         else:
-            self.id = str(uuid4())
             self.created_at = datetime.utcnow()
 
     def __set_attributes(self, attr_dict):
         """
             private: converts attr_dict values to python class attributes
         """
-        if 'id' not in attr_dict:
-            attr_dict['id'] = str(uuid4())
-        if 'created_at' not in attr_dict:
-            attr_dict['created_at'] = datetime.utcnow()
-        elif not isinstance(attr_dict['created_at'], datetime):
-            attr_dict['created_at'] = datetime.strptime(
-                attr_dict['created_at'], "%Y-%m-%d %H:%M:%S.%f"
-            )
-        if 'updated_at' not in attr_dict:
-            attr_dict['updated_at'] = datetime.utcnow()
-        elif not isinstance(attr_dict['updated_at'], datetime):
-            attr_dict['updated_at'] = datetime.strptime(
-                attr_dict['updated_at'], "%Y-%m-%d %H:%M:%S.%f"
-            )
         if STORAGE_TYPE != 'db':
             attr_dict.pop('__class__', None)
         for attr, val in attr_dict.items():
@@ -79,21 +63,6 @@ class BaseModel:
         except:
             return False
 
-    def bm_update(self, attr_dict=None):
-        """
-            updates the basemodel and sets the correct attributes
-        """
-        IGNORE = [
-            'id', 'created_at', 'updated_at', 'email',
-            'state_id', 'user_id', 'city_id', 'place_id'
-        ]
-        if attr_dict:
-            updated_dict = {
-                k: v for k, v in attr_dict.items() if k not in IGNORE
-            }
-            for key, value in updated_dict.items():
-                setattr(self, key, value)
-            self.save()
 
     def save(self):
         """

@@ -4,6 +4,7 @@
 import requests
 import sys
 import time
+import json
 
 
 def print_help():
@@ -22,13 +23,19 @@ def filter_task(all_tasks, task_required=[]):
     return aux
 
 
+def read_json():
+    """Function to read the config.json file"""
+    try:
+        with open('config.json', 'r') as json_file:
+                data = json.load(json_file)
+        return (data)
+    except Exception:
+        print("Please run the option 2 of the setup script to create the config.json file")
+        sys.exit(0)
+
 def get_token():
     try:
-        data = {
-            'api_key': '',
-            'email': '@holbertonschool.com',
-            'password': '',
-            'scope': 'checker'}
+        data = read_json()
         url_aut = 'https://intranet.hbtn.io/users/auth_token.json'
         aut = requests.post(url_aut, data)
         aut = aut.json()

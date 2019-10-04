@@ -16,7 +16,7 @@ class DBStorage:
     """
     CNC = {
         'Task': task.Task,
-        'Projects': projects.Project,
+        'Project': projects.Project,
         'Check': check.Check,
         'Correction': corrections.Correction,
         'User': user.User

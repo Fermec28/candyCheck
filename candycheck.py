@@ -120,11 +120,18 @@ def ask_correction(token, task):
         system.exit(0)
 
 
-def get_correction(token, id):
+def get_correction(token, id, project_id):
     url_project = "https://intranet.hbtn.io/correction_requests/{}.json".format(id)
     data = {'auth_token': token}
     res = requests.get(url_project, data)
     res = res.json()
+    url_correction = 'http://0.0.0.0:5000/api/v1/corrections/'
+    correction_exist = requests.get(url_correction)
+    for corrections in correction_exist.json():
+        if corrections['task_id'] == res['task_id']:
+            requests.delete(url_correction + str(corrections["id"]))
+    data_corrections = {"id": res['id'], "status": res['status'], "project_id": project_id, "task_id": res['task_id'], "user_id": res['user_id']}
+    req = requests.post(url_correction, json=data_corrections)
     return(res)
 
 
@@ -144,21 +151,26 @@ def get_checkers(token, project, tasks=[]):
             result = {"status": "Send"}
             print("\nWe are generating correction for task - {}\n".format(task["title"]))
             while (result["status"] != "Done"):
-                result = get_correction(token, correction)
+                result = get_correction(token, correction, project["id"])
                 print("wait for 6 seconds more.....")
                 time.sleep(6)
             """  Call function to display the checker result"""
             corrects_d['title'] = task['title']
             corrects_d['result'] =result
             corrects_l.append(corrects_d)
-        print_result(corrects_l)
+        print_result(corrects_l, result['id'])
 
-def print_result(corrects_l):
+def print_result(corrects_l, correction_id):
     for correct in corrects_l:
         passed = 0
         checkers = correct['result'].get('result_display')['checks']
         num_checks = len(checkers)
+        url_check = 'http://0.0.0.0:5000/api/v1/checks/'
         for check in checkers:
+            check_exist = requests.get(url_check + str(check["id"]))
+            if not check_exist: 
+                data_checks = {"id": check['id'], "title": check['title'], "passed": check["passed"], "correction_id": correction_id}
+                req = requests.post(url_check, json=data_checks)
             if check['passed'] == True:
                 passed += 1
         print("\n")
@@ -214,16 +226,14 @@ if not proj:
 
 ''' Get tasks '''
 if tasks:
-   proj = get_project(tok, project)
-   for task in tasks:
-       for pr_task in proj['tasks']:
-           if pr_task['position'] == task:
-               url_task = 'http://0.0.0.0:5000/api/v1/tasks/'
-               task_exist = requests.get(url_task+str(pr_task['id']))
-               if not task_exist:
-                   data_task = {"id": pr_task['id'], "title": pr_task['title'], "project_id": proj['id']}            
-                   req = requests.post(url_task, json=data_task)
-                   print(req.status_code)
+    proj = get_project(tok, project)
+    tasks = filter_task(proj['tasks'], tasks)
+    proj_id = proj['id']
+    url_task = 'http://0.0.0.0:5000/api/v1/tasks/'
+    for pr_task in tasks:
+        if not requests.get(url_task + str(pr_task["id"])):
+            data_task = {"id": pr_task['id'], "title": pr_task['title'], "project_id": proj_id}
+            req = requests.post(url_task, json=data_task)
                 
 
 ''' ********** Get Candy Checkers ******** '''

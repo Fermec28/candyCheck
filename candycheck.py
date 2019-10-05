@@ -2,6 +2,7 @@
 ''' Script that request to API Holberton checkers
 '''
 import requests
+from flask import jsonify
 import sys
 import time
 import json
@@ -49,6 +50,37 @@ def get_token():
     return token
 
 
+def get_user(token):
+    try:
+        data = {'auth_token': token}
+        url_usr = 'https://intranet.hbtn.io/users/me.json'
+        usr = requests.get(url_usr, data)
+        usr = usr.json()
+        if usr:
+            data_user = {}
+            data_user['name'] = usr.get('full_name')
+            data_user['id'] = usr.get('id')
+        else:
+            raise Exception
+    except Exception:
+        print('Are you sure you setup correctly your credentials in config.json?')
+        sys.exit(0)
+    return data_user
+
+
+def save_user(data_user):
+    try:
+        with open('config.json', 'r') as json_file:
+                data = json.load(json_file)
+    except Exception:
+        print('Are you sure you setup correctly your credentials in config.json?')
+        sys.exit(0)
+    api_user = {"id": data_user["id"], "name": data_user["name"], "email": data["email"], "password": data["password"]}
+    url_api = 'http://0.0.0.0:5000/api/v1/users/'
+    save = requests.post(url_api, json=api_user)
+    print(save.status_code)
+      
+
 def get_project(token, project):
     try:
         if not token:
@@ -66,6 +98,14 @@ def get_project(token, project):
         print('Are you sure you are checking a correct project?')
         sys.exit(0)
     return proj_dict
+
+
+def save_project(project):
+    api_project = {"id": project["id"], "name": project["name"]}
+    url_api = 'http://0.0.0.0:5000/api/v1/projects/'
+    save = requests.post(url_api, json=api_project)
+    print(save.status_code)
+    
 
 
 def ask_correction(token, task):
@@ -125,6 +165,10 @@ def print_result(corrects_l):
         print("\t* Task: {} - {}/{} checkers validated\n".format(correct['title'], passed, num_checks))
         if passed == num_checks:
             print("\t \U0001f600 \U0001f600 Congratulations, You earn a candy!!! \U0001f600 \U0001f600 \n")
+            url = 'http://192.168.8.215:5000/candy'
+            rq = requests.get(url)
+            rq = rq.json()
+            print(rq)
 
 
 if len(sys.argv) == 1:
@@ -139,8 +183,50 @@ if len(sys.argv) >= 3:
     else:
         tasks = [sys.argv[2]]
     tasks = list(map(lambda x: int(x) if x.isnumeric() else x, tasks))
+
+
 ''' Get token for requests '''
 tok = get_token()
+
+''' Validate and Get id and user name '''
+with open('config.json', 'r') as json_file:
+    data = json.load(json_file)
+id = data["email"][0:3]
+usr_exist = 'http://0.0.0.0:5000/api/v1/users/'+str(id)
+get_usr = requests.get(usr_exist)
+if get_usr:
+   pass
+else:
+    data_user = get_user(tok)
+    ''' Save data User '''
+    save_user(data_user)
+
+
+
+
 ''' Get project id and name '''
+url_proj = 'http://0.0.0.0:5000/api/v1/projects/'+sys.argv[1]
+proj = requests.get(url_proj)
+if not proj:
+   proj = get_project(tok, project)
+   save_project(proj)
+
+
+''' Get tasks '''
+if tasks:
+   proj = get_project(tok, project)
+   for task in tasks:
+       for pr_task in proj['tasks']:
+           if pr_task['position'] == task:
+               url_task = 'http://0.0.0.0:5000/api/v1/tasks/'
+               task_exist = requests.get(url_task+str(pr_task['id']))
+               if not task_exist:
+                   data_task = {"id": pr_task['id'], "title": pr_task['title'], "project_id": proj['id']}            
+                   req = requests.post(url_task, json=data_task)
+                   print(req.status_code)
+                
+
+''' ********** Get Candy Checkers ******** '''
+project = sys.argv[1] 
 proj = get_project(tok, project)
 checkers = get_checkers(tok, proj, tasks)

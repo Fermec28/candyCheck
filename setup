@@ -21,7 +21,7 @@ break
 ;;
 
 "Give the credentials")
-read  -r -p "Give me your user, please: " USER
+read  -r -p "Give me your user Holberton id (only number), please: " USER
 read  -s -p "Give me your password, please: " PASS
 echo 'If you dont know which is your APi, you can find on: '
 echo 'https://intranet.hbtn.io/dashboards/my_tools'
@@ -36,4 +36,3 @@ break
  *) echo invalid option;;
 esac
 done
-

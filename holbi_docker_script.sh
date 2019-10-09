@@ -6,6 +6,7 @@ echo '**************************************************************************
 options=("Create volume"
 	"Download container"
 	"Run container"
+	"List containers"
 	"Connect to the container"
 	"Stop container"
 	"Exit")
@@ -25,18 +26,29 @@ break
 ;;
 
 "Run container")
+echo "starting container"
 sudo docker run -p 5000:5000 -p 5001:5001 -d -it -v holbihack:/root/holbihack fermec28/flask-mysql-ready
 echo "Container running"
 break
 ;;
 
+"List containers")
+echo "active containers"
+docker ps
+break
+;;
+
 "Connect to the container")
+echo "connecting to container"
 docker exec -it $(docker ps | tail -1 | rev | cut -d " " -f 1 | rev) /bin/bash
+echo "detached from container"
 break
 ;;
 
 "Stop container")
-docker stop $(docker ps | tail -1 | rev | cut -d " " -f 1 | rev) /bin/bash
+echo "Stopping container"
+docker stop $(docker ps | tail -1 | rev | cut -d " " -f 1 | rev)
+echo "Container stopped"
 break
 ;;
 

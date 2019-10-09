@@ -7,6 +7,7 @@ options=("Create volume"
 	"Download container"
 	"Run container"
 	"Connect to the container"
+	"Stop container"
 	"Exit")
 select opt in "${options[@]}"
 do                                                                                                                                                                       case $opt in                                                                                                                                                         	"Create volume")
@@ -31,6 +32,11 @@ break
 
 "Connect to the container")
 docker exec -it $(docker ps | tail -1 | rev | cut -d " " -f 1 | rev) /bin/bash
+break
+;;
+
+"Stop container")
+docker stop $(docker ps | tail -1 | rev | cut -d " " -f 1 | rev) /bin/bash
 break
 ;;
 
